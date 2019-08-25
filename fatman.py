@@ -1,6 +1,7 @@
 import networkx as nx
 import matplotlib.pyplot as plt
 import random
+import math
 
 def create_graph(n):
     G = nx.Graph()
@@ -76,6 +77,29 @@ def homophily(G):
                 r=random.uniform(0,1)
                 if (r<p):
                     G.add_edge(u,v)
+def cmn(u,v,G):
+    nu = set(G.neighbors(u))
+    nv = set(G.neighbors(v))
+    return len(nu & nv)
+def closure(G):
+    array1 = []
+    for u in G.nodes():
+        for v in G.nodes():
+            if v!=u and (G.node[u]['type']=='person' or G.node[v]['type']=='person'):
+                k=cmn(u,v,G)
+                p=1-math.pow(1-0.01,k)
+                tmp = []
+                tmp.append(u)
+                tmp.append(v)
+                tmp.append(p)
+                array1.append(tmp)
+    for each in array1:
+        u = each[0]
+        v = each[1]
+        p = each[2]
+        r = random.uniform(0,1)
+        if(r<p):
+            G.add_edge(u,v)
 G = create_graph(100)
 assign_bmi(G)
 add_foci_nodes(G)
@@ -83,5 +107,10 @@ labeldict = get_labels(G)
 arraysize = get_size(G)
 colorarray = get_color(G)
 add_foci_edges(G)
+
+visualize(G,labeldict,arraysize,colorarray)
 homophily(G)
 visualize(G,labeldict,arraysize,colorarray)
+while(1):
+    closure(G)
+    visualize(G,labeldict,arraysize,colorarray)
