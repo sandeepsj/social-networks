@@ -2,14 +2,21 @@ import networkx as nx
 import matplotlib.pyplot as plt
 import random
 import math
+import time
 
 def create_graph(n):
     G = nx.Graph()
     G.add_nodes_from(range(1,n+1))
     return G
-def visualize(G,labeldict,nsize,color):
-    nx.draw(G,labels = labeldict,node_size = nsize,node_color = color)
-    plt.show()
+def visualize(G):
+    time.sleep(1)
+    labeldict = get_labels(G)
+    arraysize = get_size(G)
+    colorarray = get_color(G)
+    nx.draw(G,labels = labeldict,node_size = arraysize,node_color = colorarray)
+    plt.savefig('evolution.jpg')
+    plt.clf()
+    plt.cla()
 def assign_bmi(G):
     for each in G.nodes():
         G.node[each]['name'] = random.randint(15,40)
@@ -100,17 +107,29 @@ def closure(G):
         r = random.uniform(0,1)
         if(r<p):
             G.add_edge(u,v)
+def change_bmi(G):
+    fnodes = get_foci_nodes()
+    for each in fnodes:
+        if G.node[each]['name'] == 'eatout':
+            for each1 in G.neighbors(each):
+                if G.node[each1] != 40:
+                    G.node[each1]['name'] += 1
+        if G.node[each]['name'] == 'gym':
+            for each1 in G.neighbors(each):
+                if G.node[each1] != 40:
+                    G.node[each1]['name'] -= 1
 G = create_graph(100)
 assign_bmi(G)
 add_foci_nodes(G)
-labeldict = get_labels(G)
-arraysize = get_size(G)
-colorarray = get_color(G)
 add_foci_edges(G)
-
-visualize(G,labeldict,arraysize,colorarray)
-homophily(G)
-visualize(G,labeldict,arraysize,colorarray)
-while(1):
+time.sleep(10)
+visualize(G)
+nx.write_gml(G,'evolution_0.gml')
+for t in range(10):
+    #visualize(G,labeldict,arraysize,colorarray)
+    homophily(G)
+    #visualize(G,labeldict,arraysize,colorarray)
     closure(G)
-    visualize(G,labeldict,arraysize,colorarray)
+    change_bmi(G)
+    visualize(G)
+    nx.write_gml(G,'evolution_'+str(t+1)+'.gml')
