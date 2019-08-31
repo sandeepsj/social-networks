@@ -94,6 +94,7 @@ def count_unstable(all_signs):
     return unstable
 
 #--------------------------------------------
+
 tris_list = getTrias(G)
 all_signs = get_signs_of_tris(tris_list, G)
 unstable = count_unstable(all_signs)
@@ -185,7 +186,7 @@ edge_labels = nx.get_edge_attributes(G, 'sign')
 pos = nx.circular_layout(G)
 nx.draw_networkx_nodes(G, pos, first, 3000, "red", alpha = 0.8)
 nx.draw_networkx_nodes(G, pos, second, 3000, "blue", alpha = 0.8)
-nx.draw_networkx_labels(G, pos, font_size = 10, font_family = 'sans-erif')
+nx.draw_networkx_labels(G, pos, font_size = 10)
 nx.draw_networkx_edges(G, pos)
 nx.draw_networkx_edge_labels(G, pos, edge_labels = edge_labels, font_size = 20, font_color = "green")
 plt.show()
