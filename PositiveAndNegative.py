@@ -38,6 +38,8 @@ def create_Graph(n):
     G.add_nodes_from(range(1,n+1))
     mapping = {1:'Alexancra',2:'Anterim',3:'Bercy', 4:'Bearland', 5: 'Eplex', 6: 'Gripa', 7: 'Ikly', 8:'Jemra', 9: 'Lema', 10: 'Umesi', 11: 'Mexim', 12: 'Socialcity', 13: 'Tersi', 14: 'Xopia', 15: 'Tamara'}
     G = nx.relabel_nodes(G, mapping)
+    
+
     return G
 #2.Make it a complete graph by adding all possible edges.Also, assigne '+' or '-' signs as weights to all the edges randomly
 def Complete_and_Assign_Sign(G):
