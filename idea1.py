@@ -1,12 +1,14 @@
 import networkx as nx
 import matplotlib.pyplot as plt
 import random
+import itertools
+import copy
 
 '''
 G = nx.erdos_renyi_graph(10,0.5)
 nx.write_gml(G, 'random_graph.gml')
 '''
-def set_nodes_A(G,*nodes):
+def set_nodes_A(G,nodes):
     for each in nodes:
         G.node[each]['action'] = 'A'
 def set_all_B(G):
@@ -28,7 +30,7 @@ def find_neigh(each,c,G):
     return num
 def recalculate_option(G):
     dict1 = {}
-    a = 4
+    a = 7
     b = 3
     for each in G.nodes():
         num_A = find_neigh(each,'A',G)
@@ -40,6 +42,14 @@ def recalculate_option(G):
         else:
             dict1[each] = 'B'
     return dict1
+def check_flag(G):
+    action = G.node[0]['action']
+    flag = False
+    for each in G.nodes():
+        if G.node[each]['action'] != action:
+            flag = True
+    return flag
+            
 def reset_node_attribute(G,action_dict):
     for each in action_dict:
         G.node[each]['action'] = action_dict[each]
@@ -47,13 +57,26 @@ def reset_node_attribute(G,action_dict):
 #G = nx.read_gml('random_graph.gml')
 G = nx.erdos_renyi_graph(10,0.5)
 set_all_B(G)
-set_nodes_A(G,3,7)
-colors = Color_it(G)
-nx.draw(G, node_color = colors, node_size = 800, with_labels = True)
-plt.show()
+counter = []
+initer = []
+G_temp = copy.deepcopy(G)
+for init_nodes in list(itertools.combinations(G.nodes(),2)):
+    G = copy.deepcopy(G_temp)
+    set_nodes_A(G,init_nodes)
+    colors = Color_it(G)
+    nx.draw(G, node_color = colors, node_size = 800, with_labels = True)
+    plt.show()
+    count = 0
+    while(check_flag(G)):
+        action_dict = recalculate_option(G)
+        reset_node_attribute(G,action_dict)
+        count +=1
+        colors = Color_it(G)
+    nx.draw(G, node_color = colors, node_size = 800, with_labels = True)
+    plt.show()
+    print(count)
+    counter.append(count)
+    initer.append(init_nodes)
+print (counter)
 
-action_dict = recalculate_option(G)
-reset_node_attribute(G,action_dict)
-colors = Color_it(G)
-nx.draw(G, node_color = colors, node_size = 800, with_labels = True)
-plt.show()
+print (initer[counter.index(min(counter))])
